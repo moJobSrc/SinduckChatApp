@@ -20,9 +20,6 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-
-
-
         login.setOnClickListener {
             GlobalScope.launch(Dispatchers.IO) {
                 val result = XmppConnectionManager.setConnection(

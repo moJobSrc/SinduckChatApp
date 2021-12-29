@@ -45,11 +45,12 @@ class RosterAdapter(
             }
 
         }
+        // 올래 tv count는 오프라인 메시지가 있는지없는지 확인이였음 -> 온 오프라인 변경
         if (!offlineMessages.isNullOrEmpty()) {
             holder.tvCount.visibility = View.VISIBLE
-            holder.tvCount.text = offlineMessages.size.toString()
+//            holder.tvCount.text = offlineMessages.size.toString()
         } else {
-            holder.tvCount.visibility = View.GONE
+            holder.tvCount.visibility = View.VISIBLE
         }
         /* var isOnline = false
          if (presence != null) {
@@ -61,17 +62,17 @@ class RosterAdapter(
              }
          }*/
         if (roster.getPresence(roaster.jid).isAvailable)
-            holder.itemView.setBackgroundColor(
+            holder.tvCount.setBackgroundColor(
                 ContextCompat.getColor(
                     holder.itemView.context,
                     android.R.color.holo_green_light
                 )
             )
         else {
-            holder.itemView.setBackgroundColor(
+            holder.tvCount.setBackgroundColor(
                 ContextCompat.getColor(
                     holder.itemView.context,
-                    android.R.color.white
+                    android.R.color.darker_gray
                 )
             )
         }
