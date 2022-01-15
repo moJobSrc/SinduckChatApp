@@ -4,26 +4,25 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="@color/colorPrimary"
     tools:context=".ChatLayout"
     android:orientation="vertical">
 
     <LinearLayout
-        android:background="@drawable/up_background"
         android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:gravity="center_vertical"
         android:orientation="horizontal">
 
         <ImageView
             android:id="@+id/imageView"
             android:layout_marginLeft="10dp"
-            android:layout_marginTop="7dp"
             android:layout_marginRight="5dp"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             app:srcCompat="?attr/actionModeCloseDrawable" />
 
         <TextView
-            android:layout_marginTop="12dp"
             android:id="@+id/partner"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -35,13 +34,15 @@
     </LinearLayout>
 
     <androidx.recyclerview.widget.RecyclerView
+        android:paddingTop="20dp"
+        android:background="@drawable/up_round"
         android:id="@+id/rv"
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1"/>
 
     <LinearLayout
-        android:background="@drawable/down_background"
+        android:background="@color/grayWhite"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="horizontal"
@@ -52,12 +53,12 @@
 
         <EditText
             android:id="@+id/inputText"
-            android:layout_width="match_parent"
+            android:layout_width="0dp"
             android:layout_height="40dp"
             android:textSize="15dp"
             android:layout_weight="1"
             android:textColor="#232323"
-            android:hint="텍스트"/>
+            android:hint="type a message"/>
 
         <ImageView
             android:id="@+id/sendButton"

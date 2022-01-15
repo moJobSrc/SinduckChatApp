@@ -10,6 +10,7 @@
         android:gravity="center"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_gravity=""
         android:orientation="horizontal">
 
         <TextView
@@ -20,14 +21,7 @@
             android:layout_height="wrap_content"
             android:text="아델"
             android:textSize="18dp"
-            android:textColor="#232323" />
-
-        <LinearLayout
-            android:layout_marginTop="2dp"
-            android:layout_marginLeft="5dp"
-            android:layout_width="3dp"
-            android:layout_height="16dp"
-            android:background="#232323"/>
+            android:textColor="@color/boldBlack" />
 
         <TextView
             android:id="@+id/item_date"
@@ -37,10 +31,12 @@
     </LinearLayout>
 
     <TextView
+        android:background="@drawable/other_chat_item"
         android:id="@+id/messageBody"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Lporemklajsdfljklskdksdlk;j alskdjflkasjdlk asdlkfjlk lajsdlk lkasdjfl asldkfj laksdfjlk asdflkj"
+        android:padding="7dp"
+        android:text="안녕하세요"
         />
 
 </LinearLayout>
