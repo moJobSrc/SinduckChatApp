@@ -27,6 +27,7 @@ object XmppConnectionManager {
             val config = XMPPTCPConnectionConfiguration.builder()
                 .setUsernameAndPassword(id, pw)
                 .setPort(5222)
+                .setSendPresence(false)
                 .setSecurityMode(ConnectionConfiguration.SecurityMode.disabled)
                 .setXmppDomain(serviceName)
                 .setHostnameVerifier(hostnameVerifier)

@@ -20,7 +20,7 @@ object XmppUtil {
 
     fun getMessageBodyWithoutXML(message: Message): MessagesData {
         return MessagesData(
-            "호환 오류",
+            "상대방이름",
             "",
             message.body.toString()
         )

@@ -20,6 +20,7 @@ import org.jivesoftware.smack.chat2.ChatManager
 import org.jivesoftware.smack.packet.ExtensionElement
 import org.jivesoftware.smack.packet.Message
 import org.jivesoftware.smack.provider.ProviderManager
+import org.jivesoftware.smackx.offline.OfflineMessageManager
 import org.jxmpp.jid.impl.JidCreate
 import java.lang.ClassCastException
 import java.text.SimpleDateFormat
@@ -32,7 +33,7 @@ class ChatLayout : AppCompatActivity() {
     private lateinit var chatManager: ChatManager
     private lateinit var sendTo: String
 
-    private val TAG: String = MainActivity::class.java.simpleName
+    private val TAG: String = ChatLayout::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,6 +51,8 @@ class ChatLayout : AppCompatActivity() {
 
         chatManager = ChatManager.getInstanceFor(mConnection)
         currentChat = chatManager.chatWith(JidCreate.entityBareFrom(sendTo /** form name@192.168.0.105 **/))
+        val mOfflineMessageManager = OfflineMessageManager(mConnection)
+        Log.d(TAG, "OFFLINE MESSAGE: " + mOfflineMessageManager.messages.toString())
         setMsgListener()
 
         sendButton.setOnClickListener {
@@ -85,7 +88,7 @@ class ChatLayout : AppCompatActivity() {
                             MessageExtension().namespace,
                             MessageExtension().Provider()
                         )
-
+                        //시간 클라이언트 기준으로 추가->
                         //check for message with time extension
                         val packetExtension: ExtensionElement = message.getExtension(MessageExtension().elementName, MessageExtension().namespace)
                         Log.d("Packet", message.toXML("").toString())

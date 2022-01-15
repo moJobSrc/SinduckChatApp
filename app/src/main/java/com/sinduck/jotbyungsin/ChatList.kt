@@ -32,21 +32,21 @@ class ChatList : AppCompatActivity(), RosterAdapter.RoasterClickListener {
         setContentView(R.layout.activity_chat_list)
 
         roster.subscriptionMode = Roster.SubscriptionMode.accept_all
-        mConnection.addPacketInterceptor(StanzaListener { packet ->
-            if (packet is Presence) {
-                runOnUiThread {
-                    Toast.makeText(
-                        applicationContext,
-                        "PRESENCES" + packet.from,
-                        Toast.LENGTH_SHORT
-                    ).show()
-                }
-            }
-        }, object : StanzaFilter {
-            override fun accept(stanza: Stanza?): Boolean {
-                return stanza is Presence
-            }
-        })
+//        mConnection.addPacketInterceptor(StanzaListener { packet ->
+//            if (packet is Presence) {
+//                runOnUiThread {
+//                    Toast.makeText(
+//                        applicationContext,
+//                        "PRESENCES" + packet.from,
+//                        Toast.LENGTH_SHORT
+//                    ).show()
+//                }
+//            }
+//        }, object : StanzaFilter {
+//            override fun accept(stanza: Stanza?): Boolean {
+//                return stanza is Presence
+//            }
+//        })
 
         roster.addRosterListener(object: RosterListener {
             override fun entriesAdded(addresses: MutableCollection<Jid>?) {
@@ -79,10 +79,10 @@ class ChatList : AppCompatActivity(), RosterAdapter.RoasterClickListener {
 
     fun getBuddies() {
         GlobalScope.launch(Dispatchers.IO) {
-            rosterLists.clear()
             val entries = roster.entries
             Log.e("Size of Roster :", "" + entries?.size)
             if (entries != null) {
+                rosterLists.clear()
                 for (entry in entries) {
                     rosterLists.add(entry)
                     if (entry.type == RosterPacket.ItemType.from) {
@@ -110,6 +110,11 @@ class ChatList : AppCompatActivity(), RosterAdapter.RoasterClickListener {
         intent.putExtra("user", entry.jid.asUnescapedString())
         Log.d("intent():",entry.jid.asUnescapedString())
         startActivity(intent)
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        mConnection.disconnect()
     }
 
     override fun onResume() {
