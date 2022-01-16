@@ -12,7 +12,7 @@ import kotlinx.android.synthetic.main.rv_layout.view.*
 class Adapter(val mMessagesData: ArrayList<MessagesData>) : RecyclerView.Adapter<Adapter.Holder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         return Holder(
-            LayoutInflater.from(parent.context).inflate(R.layout.rv_layout, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.receiveMsg_layout, parent, false)
 
         )
     }

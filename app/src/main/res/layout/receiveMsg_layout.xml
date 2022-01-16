@@ -32,7 +32,7 @@
         android:layout_height="wrap_content"
         android:background="@drawable/other_chat_item"
         android:padding="9dp"
-        android:text="무상이"
+        android:text="무상이존나보내무상이존나보내"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
