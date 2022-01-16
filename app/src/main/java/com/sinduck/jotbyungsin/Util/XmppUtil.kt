@@ -10,6 +10,8 @@ object XmppUtil {
     val publicAddr = "39.113.240.156"
     val Domain = "192.168.0.105"
 
+
+
     fun getStringWithDomain(_String: String): String {
         return "${_String}@${Domain}";
     }
@@ -22,7 +24,7 @@ object XmppUtil {
         return MessagesData(
             "상대방이름",
             "",
-            message.body.toString()
+            message.body.toString(),false
         )
     }
 }

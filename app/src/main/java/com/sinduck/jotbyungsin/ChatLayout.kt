@@ -1,30 +1,28 @@
 package com.sinduck.jotbyungsin
 
 import android.annotation.SuppressLint
-import android.content.Intent
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.widget.Toast
-import androidx.recyclerview.widget.DividerItemDecoration
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sinduck.jotbyungsin.Util.MessageExtension
 import com.sinduck.jotbyungsin.Util.XmppConnectionManager.mConnection
 import com.sinduck.jotbyungsin.Util.XmppUtil
-import com.sinduck.jotbyungsin.Util.XmppUtil.getStringWithDomain
 import kotlinx.android.synthetic.main.activity_chat_layout.*
 import org.jivesoftware.smack.SmackException
-import org.jivesoftware.smack.chat.ChatManagerListener
 import org.jivesoftware.smack.chat2.Chat
 import org.jivesoftware.smack.chat2.ChatManager
 import org.jivesoftware.smack.packet.ExtensionElement
 import org.jivesoftware.smack.packet.Message
 import org.jivesoftware.smack.provider.ProviderManager
 import org.jivesoftware.smackx.offline.OfflineMessageManager
+import org.jivesoftware.smackx.receipts.DeliveryReceiptManager
+import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest
 import org.jxmpp.jid.impl.JidCreate
-import java.lang.ClassCastException
 import java.text.SimpleDateFormat
 import java.util.*
+
 
 class ChatLayout : AppCompatActivity() {
     private var mAdapter: Adapter? = null
@@ -43,12 +41,17 @@ class ChatLayout : AppCompatActivity() {
         partner.text = sendTo.split("@")[0]
         mAdapter = Adapter(mMessagesData)
         val manager = LinearLayoutManager(this)
+        rv.layoutManager = manager
         rv.adapter = mAdapter
+        val deliveryManager = DeliveryReceiptManager.getInstanceFor(mConnection)
+        deliveryManager.addReceiptReceivedListener { fromJid, toJid, receiptId, receipt ->
+            Log.i("delivery", "for: $receiptId received")
+        }
 
         chatManager = ChatManager.getInstanceFor(mConnection)
         currentChat = chatManager.chatWith(JidCreate.entityBareFrom(sendTo /** form name@192.168.0.105 **/))
         val mOfflineMessageManager = OfflineMessageManager(mConnection)
-        Log.d(TAG, "OFFLINE MESSAGE: " + mOfflineMessageManager.messages.toString())
+        mOfflineMessageManager.messages.forEach {  Log.d(TAG, "OFFLINE MESSAGE: "+it.body) }
         setMsgListener()
 
         sendButton.setOnClickListener {
@@ -74,7 +77,7 @@ class ChatLayout : AppCompatActivity() {
             if (message != null) {
                 Log.d(TAG, message.toString())
                 Log.d(TAG, "barejid:${message.from.asBareJid()} || addrPartner:${chat.xmppAddressOfChatPartner}")
-                //if 문확인 연구 필요
+                //받은사람이 파트너인지 확인
                 if (message.from.asBareJid() == chat.xmppAddressOfChatPartner) {
                     //외부 통신 XMPP 메시지 에러 핸들링
                     val data = try {
@@ -107,7 +110,7 @@ class ChatLayout : AppCompatActivity() {
                         MessagesData(
                             sendTo.split("@")[0],
                             ext.getTimeMessage().toString(),
-                            message.body.toString()
+                            message.body.toString(), false
                         )
                     } catch (e: NullPointerException) {
                         XmppUtil.getMessageBodyWithoutXML(message)
@@ -153,8 +156,10 @@ class ChatLayout : AppCompatActivity() {
 
         Log.e("message --->", message.toXML("").toString())
         try {
+            DeliveryReceiptRequest.addTo(message)
             currentChat.send(message)
-            val data = MessagesData("나", msgExt.getTimeMessage()?: "", messageSend)
+
+            val data = MessagesData("", msgExt.getTimeMessage()?: "", messageSend, true)
             mMessagesData.add(data)
             mAdapter?.notifyItemInserted(mMessagesData.size)
             rv.scrollToPosition(mMessagesData.size - 1)

@@ -9,8 +9,8 @@
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/profileImage"
-        android:layout_width="50dp"
-        android:layout_height="50dp"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
         android:src="@mipmap/ic_launcher"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
@@ -19,11 +19,11 @@
         android:id="@+id/heading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="0dp"
-        android:padding="0dp"
-        android:text="아델"
+        android:text="USER"
         android:textColor="@color/boldBlack"
         android:textSize="18sp"
+        android:layout_marginLeft="5dp"
+        app:layout_constraintBottom_toTopOf="@+id/messageBody"
         app:layout_constraintStart_toEndOf="@id/profileImage"
         app:layout_constraintTop_toTopOf="parent" />
 
@@ -33,7 +33,8 @@
         android:layout_height="wrap_content"
         android:background="@drawable/other_chat_item"
         android:padding="9dp"
-        android:text="무상이존나보내무상이존나보내"
+        android:text="MESSAGE"
+        android:layout_marginLeft="5dp"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constrainedWidth="true"
         app:layout_constraintBottom_toBottomOf="parent"
@@ -51,6 +52,7 @@
         android:layout_gravity="bottom"
         android:text="오전 7시 30분"
         android:layout_marginRight="40dp"
+        android:textSize="10sp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/messageBody" />

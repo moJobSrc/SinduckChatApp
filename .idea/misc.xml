@@ -13,9 +13,11 @@
         <entry key="..\:/SinduckChat/app/src/main/res/layout/activity_signin.xml" value="0.17708333333333334" />
         <entry key="..\:/SinduckChat/app/src/main/res/layout/activity_splash.xml" value="0.34791666666666665" />
         <entry key="..\:/SinduckChat/app/src/main/res/layout/receiveMsg_layout.xml" value="0.33" />
+        <entry key="..\:/SinduckChat/app/src/main/res/layout/receivemsg_layout.xml" value="0.5" />
         <entry key="..\:/SinduckChat/app/src/main/res/layout/row_roaster.xml" value="0.33" />
         <entry key="..\:/SinduckChat/app/src/main/res/layout/rv_layout.xml" value="0.5" />
         <entry key="..\:/SinduckChat/app/src/main/res/layout/sendMsg_layout.xml" value="0.5" />
+        <entry key="..\:/SinduckChat/app/src/main/res/layout/sendmsg_layout.xml" value="0.34791666666666665" />
       </map>
     </option>
   </component>

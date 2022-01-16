@@ -22,5 +22,4 @@
         app:layout_constraintHorizontal_weight="1"
         app:layout_constraintTop_toTopOf="parent" />
 
-
 </androidx.constraintlayout.widget.ConstraintLayout>
