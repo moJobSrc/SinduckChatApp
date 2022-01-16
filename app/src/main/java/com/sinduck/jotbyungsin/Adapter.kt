@@ -6,13 +6,13 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import androidx.recyclerview.widget.RecyclerView.ViewHolder
-import kotlinx.android.synthetic.main.rv_layout.view.*
+import kotlinx.android.synthetic.main.receivemsg_layout.view.*
 
 
 class Adapter(val mMessagesData: ArrayList<MessagesData>) : RecyclerView.Adapter<Adapter.Holder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         return Holder(
-            LayoutInflater.from(parent.context).inflate(R.layout.receiveMsg_layout, parent, false)
+            LayoutInflater.from(parent.context).inflate(R.layout.receivemsg_layout, parent, false)
 
         )
     }

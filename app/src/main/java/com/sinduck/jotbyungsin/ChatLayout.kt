@@ -43,10 +43,6 @@ class ChatLayout : AppCompatActivity() {
         partner.text = sendTo.split("@")[0]
         mAdapter = Adapter(mMessagesData)
         val manager = LinearLayoutManager(this)
-        val decoration = DividerItemDecoration(this, manager.orientation)
-
-        rv.addItemDecoration(decoration)
-        rv.layoutManager = manager
         rv.adapter = mAdapter
 
         chatManager = ChatManager.getInstanceFor(mConnection)
