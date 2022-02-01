@@ -44,6 +44,8 @@ class ChatLayout : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        val presence = Presence(Presence.Type.available)
+        mConnection.sendStanza(presence)
         setContentView(R.layout.activity_chat_layout)
         database = Databases(applicationContext, version = 1)
         sendTo = intent.getStringExtra("user")!!

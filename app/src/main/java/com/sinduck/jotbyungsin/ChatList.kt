@@ -157,11 +157,11 @@ class ChatList : AppCompatActivity(), RosterAdapter.RoasterClickListener {
         mConnection.disconnect()
     }
 
-//    override fun onPause() {
-//        super.onPause()
-//        val presence = Presence(Presence.Type.unavailable)
-//        mConnection.sendStanza(presence)
-//    }
+    override fun onStop() {
+        super.onStop()
+        val presence = Presence(Presence.Type.unavailable)
+        mConnection.sendStanza(presence)
+    }
 
     override fun onResume() {
         super.onResume()
