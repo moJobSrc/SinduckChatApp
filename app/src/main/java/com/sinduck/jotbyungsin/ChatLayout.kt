@@ -49,6 +49,7 @@ class ChatLayout : AppCompatActivity() {
         val manager = LinearLayoutManager(this)
         rv.layoutManager = manager
         rv.adapter = mAdapter
+        rv.scrollToPosition(mMessagesData.size - 1)
         val deliveryManager = DeliveryReceiptManager.getInstanceFor(mConnection)
         deliveryManager.addReceiptReceivedListener { fromJid, toJid, receiptId, receipt ->
             Log.i("delivery", "for: $receiptId received")
@@ -57,7 +58,12 @@ class ChatLayout : AppCompatActivity() {
         chatManager = ChatManager.getInstanceFor(mConnection)
         currentChat = chatManager.chatWith(JidCreate.entityBareFrom(sendTo /** form name@192.168.0.105 **/))
         val mOfflineMessageManager = OfflineMessageManager(mConnection)
-        mOfflineMessageManager.messages.forEach {  Log.d(TAG, "OFFLINE MESSAGE: "+it.body) }
+        mOfflineMessageManager.messages.forEach {
+            if (it.from.asBareJid().toString() == sendTo) {
+                mMessagesData.add(MessagesData(sendTo, "TIME", it.body, false))
+            }
+        }
+        saveHistory()
         mOfflineMessageManager.deleteMessages()
         setMsgListener()
         sendButton.setOnClickListener {
@@ -83,8 +89,8 @@ class ChatLayout : AppCompatActivity() {
             if (message != null) {
                 Log.d(TAG, message.toString())
                 Log.d(TAG, "barejid:${message.from.asBareJid()} || addrPartner:${chat.xmppAddressOfChatPartner}")
-                //받은사람이 파트너인지 확인
-                if (message.from.asBareJid() == chat.xmppAddressOfChatPartner) {
+                //받은사람이 같은 서버 사용자인지 확인 && 받은 메시지가 같은사람인지 확인
+                if (message.from.asBareJid() == chat.xmppAddressOfChatPartner && message.from.asBareJid().toString() == sendTo) {
                     //외부 통신 XMPP 메시지 에러 핸들링
                     val data = try {
                         //왜하는지 모름
@@ -185,14 +191,13 @@ class ChatLayout : AppCompatActivity() {
     }
 
     private fun getHistory() {
-        try {
+        mMessagesData = try {
             val gson = Gson()
             val history = database.getHistory(sendTo)?: ""
             val type: Type = object : TypeToken<ArrayList<MessagesData?>?>() {}.type
-            mMessagesData = gson.fromJson(history, type)
+            gson.fromJson(history, type)
         } catch (e: java.lang.NullPointerException) {
-            mMessagesData = ArrayList<MessagesData>()
+            ArrayList<MessagesData>()
         }
-
     }
 }

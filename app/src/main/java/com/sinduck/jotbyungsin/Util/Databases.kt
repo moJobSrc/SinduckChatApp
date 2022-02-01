@@ -32,8 +32,13 @@ class Databases(
         val db = readableDatabase
         val result = db.rawQuery("SELECT * FROM Chatting WHERE id='$id'", null)
         result.moveToFirst()
-        Log.d("HISTROY", result.getString(1))
-        return result.getString(1)
+        try {
+            Log.d("HISTROY", result.getString(1))
+            return result.getString(1)
+        } catch (e: CursorIndexOutOfBoundsException) {
+            Log.d("HISTORY", "NOT FOUND HISTORY")
+            return ""
+        }
     }
 
     fun reset() {
