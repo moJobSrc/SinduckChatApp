@@ -13,10 +13,14 @@ import com.sinduck.jotbyungsin.Util.MessageExtension
 import com.sinduck.jotbyungsin.Util.XmppConnectionManager.mConnection
 import com.sinduck.jotbyungsin.Util.XmppUtil
 import kotlinx.android.synthetic.main.activity_chat_layout.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import org.jivesoftware.smack.SmackException
 import org.jivesoftware.smack.chat2.Chat
 import org.jivesoftware.smack.chat2.ChatManager
 import org.jivesoftware.smack.packet.Message
+import org.jivesoftware.smack.packet.Presence
 import org.jivesoftware.smack.provider.ProviderManager
 import org.jivesoftware.smackx.offline.OfflineMessageManager
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager
@@ -61,6 +65,7 @@ class ChatLayout : AppCompatActivity() {
         mOfflineMessageManager.messages.forEach {
             if (it.from.asBareJid().toString() == sendTo) {
                 mMessagesData.add(MessagesData(sendTo, "TIME", it.body, false))
+                Log.d(TAG, it.body)
             }
         }
         saveHistory()
@@ -72,6 +77,9 @@ class ChatLayout : AppCompatActivity() {
                 sendMessage(messageSend)
                 inputText.setText("")
             }
+        }
+        back.setOnClickListener {
+            finish()
         }
 
     }
@@ -137,10 +145,6 @@ class ChatLayout : AppCompatActivity() {
                         rv.scrollToPosition(mMessagesData.size - 1)
                     }
 
-                } else {
-                    runOnUiThread {
-                        Toast.makeText(applicationContext, "NEW::${message.body}", Toast.LENGTH_SHORT).show()
-                    }
                 }
             }
             Log.w("app", chat.toString())
@@ -184,10 +188,12 @@ class ChatLayout : AppCompatActivity() {
     }
 
     private fun saveHistory() {
-        val gson = Gson()
-        val history = gson.toJson(mMessagesData)
-        database.insertAndUpdate(sendTo, history)
-        Log.d("SAVE", history)
+        GlobalScope.launch(Dispatchers.IO) {
+            val gson = Gson()
+            val history = gson.toJson(mMessagesData)
+            database.insertAndUpdate(sendTo, history)
+            Log.d("SAVE", history)
+        }
     }
 
     private fun getHistory() {
@@ -199,5 +205,11 @@ class ChatLayout : AppCompatActivity() {
         } catch (e: java.lang.NullPointerException) {
             ArrayList<MessagesData>()
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        val presence = Presence(Presence.Type.available)
+        mConnection.sendStanza(presence)
     }
 }

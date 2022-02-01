@@ -49,6 +49,7 @@ dependencies {
     implementation "org.igniterealtime.smack:smack-im:4.3.0"
     // Optional for XMPP extensions support
     implementation "org.igniterealtime.smack:smack-extensions:4.3.0"
+    implementation "org.igniterealtime.smack:smack-android-extensions:4.3.0"
     implementation ("org.igniterealtime.smack:smack-android:4.3.0") {
         exclude module:'smack-omemo'
         exclude module:'smack-omemo-signal'

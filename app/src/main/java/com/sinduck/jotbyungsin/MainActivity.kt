@@ -1,6 +1,8 @@
 package com.sinduck.jotbyungsin
 
+import android.content.Context
 import android.content.Intent
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
@@ -29,12 +31,21 @@ class MainActivity : AppCompatActivity() {
                 runOnUiThread {
                     if (result) {
                         Log.e(TAG, "SUCCESS AUTH")
+                        val preferences = getSharedPreferences("userAbout", Context.MODE_PRIVATE)
+                        val editor = preferences.edit();
+                        editor.putString("id", idText.text.toString());
+                        editor.putString("pw", pwText.text.toString());
+                        editor.apply()
                         startActivity(Intent(applicationContext, ChatList::class.java))
+                        finish()
                     } else {
                         Log.e(TAG, "FAILED")
                     }
                 }
             }
+        }
+        register.setOnClickListener {
+            startActivity(Intent(applicationContext, SigninActivity::class.java))
         }
     }
 }
