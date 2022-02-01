@@ -6,8 +6,9 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
-import com.sinduck.jotbyungsin.Util.XmppConnectionManager.roster
+import com.sinduck.jotbyungsin.Util.XmppConnectionManager
 import org.jivesoftware.smack.packet.Message
+import org.jivesoftware.smack.roster.Roster
 import org.jivesoftware.smack.roster.RosterEntry
 import org.jxmpp.jid.Jid
 
@@ -17,6 +18,7 @@ class RosterAdapter(
     private val map: Map<Jid, List<Message>>
 ) :
     RecyclerView.Adapter<RosterAdapter.MyViewHolder>() {
+    val roster = Roster.getInstanceFor(XmppConnectionManager.mConnection)
     private var listener: RoasterClickListener? = null
 
     inner class MyViewHolder(view: View) : RecyclerView.ViewHolder(view) {

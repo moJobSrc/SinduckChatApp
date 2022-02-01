@@ -3,19 +3,15 @@ package com.sinduck.jotbyungsin
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.sinduck.jotbyungsin.Util.XmppConnectionManager
 import com.sinduck.jotbyungsin.Util.XmppConnectionManager.mConnection
-import com.sinduck.jotbyungsin.Util.XmppConnectionManager.roster
 import kotlinx.android.synthetic.main.activity_chat_list.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
-import org.jivesoftware.smack.StanzaListener
-import org.jivesoftware.smack.filter.StanzaFilter
 import org.jivesoftware.smack.packet.Presence
-import org.jivesoftware.smack.packet.Stanza
 import org.jivesoftware.smack.roster.Roster
 import org.jivesoftware.smack.roster.RosterEntry
 import org.jivesoftware.smack.roster.RosterListener
@@ -26,6 +22,7 @@ import org.jxmpp.jid.Jid
 class ChatList : AppCompatActivity(), RosterAdapter.RoasterClickListener {
     private var rosterLists: ArrayList<RosterEntry> = ArrayList()
     private lateinit var adapter: RosterAdapter
+    private val roster = Roster.getInstanceFor(mConnection)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

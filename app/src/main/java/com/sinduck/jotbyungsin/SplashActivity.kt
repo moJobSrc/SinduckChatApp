@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.view.View
+import com.sinduck.jotbyungsin.Util.Databases
 import kotlinx.android.synthetic.main.activity_splash.*
 
 class SplashActivity : AppCompatActivity() {
@@ -22,7 +23,6 @@ class SplashActivity : AppCompatActivity() {
         }
 
         handler.postDelayed(runnable, 3000)
-
         animationView.setOnClickListener{
             handler.removeCallbacks(runnable)
             val intent = Intent(this, MainActivity::class.java)

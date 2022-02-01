@@ -6,6 +6,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.gson.Gson
+import com.google.gson.reflect.TypeToken
+import com.sinduck.jotbyungsin.Util.Databases
 import com.sinduck.jotbyungsin.Util.MessageExtension
 import com.sinduck.jotbyungsin.Util.XmppConnectionManager.mConnection
 import com.sinduck.jotbyungsin.Util.XmppUtil
@@ -13,31 +16,34 @@ import kotlinx.android.synthetic.main.activity_chat_layout.*
 import org.jivesoftware.smack.SmackException
 import org.jivesoftware.smack.chat2.Chat
 import org.jivesoftware.smack.chat2.ChatManager
-import org.jivesoftware.smack.packet.ExtensionElement
 import org.jivesoftware.smack.packet.Message
 import org.jivesoftware.smack.provider.ProviderManager
 import org.jivesoftware.smackx.offline.OfflineMessageManager
 import org.jivesoftware.smackx.receipts.DeliveryReceiptManager
 import org.jivesoftware.smackx.receipts.DeliveryReceiptRequest
 import org.jxmpp.jid.impl.JidCreate
+import java.lang.reflect.Type
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.collections.ArrayList
 
 
 class ChatLayout : AppCompatActivity() {
     private var mAdapter: Adapter? = null
-    private val mMessagesData = ArrayList<MessagesData>()
+    private var mMessagesData = ArrayList<MessagesData>()
     private lateinit var currentChat: Chat
     private lateinit var chatManager: ChatManager
     private lateinit var sendTo: String
+    private lateinit var database: Databases
 
     private val TAG: String = ChatLayout::class.java.simpleName
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat_layout)
-
+        database = Databases(applicationContext, version = 1)
         sendTo = intent.getStringExtra("user")!!
+        getHistory()
         partner.text = sendTo.split("@")[0]
         mAdapter = Adapter(mMessagesData)
         val manager = LinearLayoutManager(this)
@@ -52,8 +58,8 @@ class ChatLayout : AppCompatActivity() {
         currentChat = chatManager.chatWith(JidCreate.entityBareFrom(sendTo /** form name@192.168.0.105 **/))
         val mOfflineMessageManager = OfflineMessageManager(mConnection)
         mOfflineMessageManager.messages.forEach {  Log.d(TAG, "OFFLINE MESSAGE: "+it.body) }
+        mOfflineMessageManager.deleteMessages()
         setMsgListener()
-
         sendButton.setOnClickListener {
             val messageSend = inputText.text.toString()
             if (messageSend.isNotEmpty()) {
@@ -89,27 +95,26 @@ class ChatLayout : AppCompatActivity() {
                         )
                         //시간 클라이언트 기준으로 추가->
                         //check for message with time extension
-                        val packetExtension: ExtensionElement = message.getExtension(MessageExtension().elementName, MessageExtension().namespace)
-                        Log.d("Packet", message.toXML("").toString())
-                        val packetTime = packetExtension.toXML("").toString()
-                            .replace("xmlns:stream='http://etherx.jabber.org/streams'", "")
-                            .replace("<","").replace(">","")
-                            .replace("time", "")
-                            .replace("xmlns='stamp:'", "").replace("/","")
-                            .replace("mTime='","").replace("'","").replace(" ","")
-                        val ext = MessageExtension().apply { setTimeMessage(packetTime) }
-                        Log.d("time:", packetTime)
-//                        ext.setTimeMessage(packet.)
-                        Log.e("--->", " ---  LOG REPLY EXTENSION ---")
-                        Log.e("--->", ext.toXML("").toString() + "")
-                        Log.e(
-                            "--->",
-                            ext.getTimeMessage().toString() + ""
-                        ) //this is custom attribute
-
+//                        val packetExtension: ExtensionElement = message.getExtension(MessageExtension().elementName, MessageExtension().namespace)
+//                        Log.d("Packet", message.toXML("").toString())
+//                        val packetTime = packetExtension.toXML("").toString()
+//                            .replace("xmlns:stream='http://etherx.jabber.org/streams'", "")
+//                            .replace("<","").replace(">","")
+//                            .replace("time", "")
+//                            .replace("xmlns='stamp:'", "").replace("/","")
+//                            .replace("mTime='","").replace("'","").replace(" ","")
+//                        val ext = MessageExtension().apply { setTimeMessage(packetTime) }
+//                        Log.d("time:", packetTime)
+////                        ext.setTimeMessage(packet.)
+//                        Log.e("--->", " ---  LOG REPLY EXTENSION ---")
+//                        Log.e("--->", ext.toXML("").toString() + "")
+//                        Log.e(
+//                            "--->",
+//                            ext.getTimeMessage().toString() + ""
+//                        ) //this is custom attribute
                         MessagesData(
                             sendTo.split("@")[0],
-                            ext.getTimeMessage().toString(),
+                            "TIME",
                             message.body.toString(), false
                         )
                     } catch (e: NullPointerException) {
@@ -121,6 +126,7 @@ class ChatLayout : AppCompatActivity() {
                     Log.e(TAG, "MSG::" + from + ": " + data.messages)
                     runOnUiThread {
                         mMessagesData.add(data)
+                        saveHistory()
                         mAdapter?.notifyItemInserted(mMessagesData.size)
                         rv.scrollToPosition(mMessagesData.size - 1)
                     }
@@ -151,7 +157,7 @@ class ChatLayout : AppCompatActivity() {
 //            from = mConnection.user
 //            to = currentChat.xmppAddressOfChatPartner
             body = messageSend
-            addExtension(msgExt)
+//            addExtension(msgExt)
         }
 
         Log.e("message --->", message.toXML("").toString())
@@ -163,10 +169,30 @@ class ChatLayout : AppCompatActivity() {
             mMessagesData.add(data)
             mAdapter?.notifyItemInserted(mMessagesData.size)
             rv.scrollToPosition(mMessagesData.size - 1)
+            saveHistory()
         } catch (e: SmackException.NotConnectedException) {
             e.printStackTrace()
         } catch (e: InterruptedException) {
             e.printStackTrace()
         }
+    }
+
+    private fun saveHistory() {
+        val gson = Gson()
+        val history = gson.toJson(mMessagesData)
+        database.insertAndUpdate(sendTo, history)
+        Log.d("SAVE", history)
+    }
+
+    private fun getHistory() {
+        try {
+            val gson = Gson()
+            val history = database.getHistory(sendTo)?: ""
+            val type: Type = object : TypeToken<ArrayList<MessagesData?>?>() {}.type
+            mMessagesData = gson.fromJson(history, type)
+        } catch (e: java.lang.NullPointerException) {
+            mMessagesData = ArrayList<MessagesData>()
+        }
+
     }
 }
